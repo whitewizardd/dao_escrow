@@ -8,7 +8,7 @@ contract EscrowFactory {
     address public dao;
     address public owner;
     mapping(address => uint) public balance;
-    address public token;
+    address[] public tokens;
     mapping(address => address[]) public userCreatedEscrow;
     mapping(address => mapping(address => address[])) public userToUserEscrow;
 
@@ -19,7 +19,20 @@ contract EscrowFactory {
         address _tokenUsed;
     }
 
+    function onlyEscrowAllowedToken(
+        address _tokenUsed
+    ) private view returns (bool) {
+        for (uint index = 0; index < tokens.length; index++) {
+            if (tokens[index] == _tokenUsed) return true;
+        }
+        return false;
+    }
+
     function createEscrow(CreateEscrow memory _escrow) external {
+        require(
+            onlyEscrowAllowedToken(_escrow._tokenUsed),
+            "token not supported."
+        );
         Escrow escrow = new Escrow(
             _escrow._creator,
             _escrow._otherParty,
