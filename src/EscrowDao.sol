@@ -4,7 +4,6 @@ pragma solidity ^0.8.20;
 import {IEscrowFactory} from "src/interfaces/IEscrowFactory.sol";
 contract EscrowDao {
     IEscrowFactory public escrowFactory;
-
     struct Dispute {
         address applicant;
         address otherParty;
@@ -32,9 +31,11 @@ contract EscrowDao {
     mapping(address => Dispute) public disputeCreated;
 
     mapping(address => mapping(address => bool)) public hasVoted;
+    uint256 public quorum;
 
-    constructor(address _escrowAddress) {
+    constructor(address _escrowAddress, uint _quorum) {
         escrowFactory = IEscrowFactory(_escrowAddress);
+        quorum = _quorum;
     }
 
     modifier onlyContract(address _contractAddress) {
@@ -80,6 +81,11 @@ contract EscrowDao {
         Decision decision
     ) external {
         require(!hasVoted[_contractAddress][msg.sender], "already voted");
+
+        if (decision == Decision.REFUND) {}
+        if (decision == Decision.CLOSED) {}
+
+        hasVoted[_contractAddress][msg.sender] = true;
     }
 
     function executeDispute(address _contractAddress) external {}
