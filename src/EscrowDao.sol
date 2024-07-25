@@ -10,6 +10,9 @@ contract EscrowDao {
         string disputeReason;
         DisputeStatus disputeStatus;
         DisputeMessage[] disputeMessage;
+        uint CLOSED;
+        uint REFUND;
+        uint totalCastedDecision;
     }
 
     struct DisputeMessage {
@@ -30,6 +33,7 @@ contract EscrowDao {
     }
 
     mapping(address => Dispute) public disputeCreated;
+    address[] public addressDispute;
 
     mapping(address => mapping(address => bool)) public hasVoted;
     uint256 public quorum;
@@ -60,6 +64,7 @@ contract EscrowDao {
         dispute.otherParty = address(0);
         dispute.disputeReason = _reason;
         dispute.disputeStatus = DisputeStatus.OPEN;
+        addressDispute.push(_contractAddress);
     }
 
     function sendMessageForDispute(
@@ -85,11 +90,19 @@ contract EscrowDao {
         Decision decision
     ) external {
         require(!hasVoted[_contractAddress][msg.sender], "already voted");
-
-        if (decision == Decision.REFUND) {}
-        if (decision == Decision.CLOSED) {}
-
         hasVoted[_contractAddress][msg.sender] = true;
+        Dispute storage dispute = disputeCreated[_contractAddress];
+        require(
+            dispute.disputeStatus == DisputeStatus.OPEN,
+            "only open dispute can be voted on"
+        );
+        if (decision == Decision.REFUND) {
+            dispute.REFUND++;
+        }
+        if (decision == Decision.CLOSED) {
+            dispute.CLOSED++;
+        }
+        dispute.totalCastedDecision++;
     }
 
     function executeDispute(address _contractAddress) external {}

@@ -66,12 +66,10 @@ contract Escrow {
         );
     }
 
-    function getEscrowDetails(
-        address user
-    )
+    function getEscrowDetails()
         external
         view
-        onlyCreatorOrOtherParty(user)
+        onlyCreatorOrOtherParty(msg.sender)
         returns (EscrowDetails memory)
     {
         return
