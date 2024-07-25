@@ -32,11 +32,7 @@ contract EscrowFactory {
         userToUserEscrow[msg.sender][_escrow._otherParty];
     }
 
-    function getUserCreatedEscrow()
-        external
-        view
-        returns (address[] memory userCreatedEscrows)
-    {
-        userCreatedEscrows = userCreatedEscrow[msg.sender];
+    function getUserCreatedEscrow() external view returns (address[] memory) {
+        return userCreatedEscrow[msg.sender];
     }
 }

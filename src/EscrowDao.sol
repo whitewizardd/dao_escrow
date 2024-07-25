@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import {IEscrowFactory} from "src/interfaces/IEscrowFactory.sol";
+import {IEscrowFactory} from "./interfaces/IEscrowFactory.sol";
 contract EscrowDao {
     IEscrowFactory public escrowFactory;
     struct Dispute {
