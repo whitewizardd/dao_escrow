@@ -9,12 +9,23 @@ contract EscrowDao {
         address applicant;
         address otherParty;
         string disputeReason;
+        DisputeStatus disputeStatus;
         DisputeMessage[] disputeMessage;
     }
 
     struct DisputeMessage {
         address user;
         string question;
+    }
+
+    enum DisputeStatus {
+        OPEN,
+        CLOSED
+    }
+
+    enum Decision {
+        REFUND,
+        CLOSED
     }
 
     mapping(address => Dispute) public disputeCreated;
@@ -58,5 +69,8 @@ contract EscrowDao {
         );
     }
 
-    // function decide
+    function voteOnDIspute(
+        address _contractAddress,
+        Decision decision
+    ) external {}
 }
