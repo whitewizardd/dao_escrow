@@ -18,6 +18,7 @@ contract EscrowDao {
     }
 
     enum DisputeStatus {
+        NOT_CREATED,
         CLOSED,
         OPEN
     }
@@ -50,12 +51,15 @@ contract EscrowDao {
         address _contractAddress,
         string memory _reason
     ) external onlyContract(_contractAddress) {
-        Dispute memory dispute;
+        Dispute storage dispute = disputeCreated[_contractAddress];
+        require(
+            dispute.disputeStatus == DisputeStatus.NOT_CREATED,
+            "dispute alfready created for this contract"
+        );
         dispute.applicant = address(0);
         dispute.otherParty = address(0);
         dispute.disputeReason = _reason;
         dispute.disputeStatus = DisputeStatus.OPEN;
-        disputeCreated[_contractAddress] = dispute;
     }
 
     function sendMessageForDispute(
@@ -89,4 +93,17 @@ contract EscrowDao {
     }
 
     function executeDispute(address _contractAddress) external {}
+
+    function getDisputeMessages(
+        address _contractAddress
+    ) external view returns (DisputeMessage[] memory) {
+        Dispute storage dispute = disputeCreated[_contractAddress];
+        return dispute.disputeMessage;
+    }
+
+    function getDispute(
+        address _contractAddress
+    ) external view returns (Dispute memory) {
+        return disputeCreated[_contractAddress];
+    }
 }
