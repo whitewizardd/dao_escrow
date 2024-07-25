@@ -31,4 +31,12 @@ contract EscrowFactory {
         userCreatedEscrow[msg.sender].push(address(escrow));
         userToUserEscrow[msg.sender][_escrow._otherParty];
     }
+
+    function getUserCreatedEscrow()
+        external
+        view
+        returns (address[] memory userCreatedEscrows)
+    {
+        userCreatedEscrows = userCreatedEscrow[msg.sender];
+    }
 }
