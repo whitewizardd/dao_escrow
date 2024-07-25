@@ -80,7 +80,7 @@ contract EscrowDao {
         );
     }
 
-    function voteOnDIspute(
+    function voteOnDispute(
         address _contractAddress,
         Decision decision
     ) external {
