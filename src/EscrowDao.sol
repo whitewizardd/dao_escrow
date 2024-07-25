@@ -19,11 +19,12 @@ contract EscrowDao {
     }
 
     enum DisputeStatus {
-        OPEN,
-        CLOSED
+        CLOSED,
+        OPEN
     }
 
     enum Decision {
+        UNDECIDED,
         REFUND,
         CLOSED
     }
@@ -52,6 +53,7 @@ contract EscrowDao {
         dispute.applicant = address(0);
         dispute.otherParty = address(0);
         dispute.disputeReason = _reason;
+        dispute.disputeStatus = DisputeStatus.OPEN;
         disputeCreated[_contractAddress] = dispute;
     }
 
@@ -64,6 +66,10 @@ contract EscrowDao {
             foundDispute.applicant != address(0),
             "invalid contract address"
         );
+        require(
+            foundDispute.disputeStatus == DisputeStatus.OPEN,
+            "only opened dispute status allowed"
+        );
         foundDispute.disputeMessage.push(
             DisputeMessage({user: msg.sender, question: question})
         );
@@ -72,5 +78,9 @@ contract EscrowDao {
     function voteOnDIspute(
         address _contractAddress,
         Decision decision
-    ) external {}
+    ) external {
+        require(!hasVoted[_contractAddress][msg.sender], "already voted");
+    }
+
+    function executeDispute(address _contractAddress) external {}
 }
