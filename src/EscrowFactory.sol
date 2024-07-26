@@ -37,7 +37,8 @@ contract EscrowFactory {
             _escrow._creator,
             _escrow._otherParty,
             _escrow._amount,
-            _escrow._tokenUsed
+            _escrow._tokenUsed,
+            dao
         );
         escrows.push(escrow);
         allEscrowsAddresses.push(address(escrow));

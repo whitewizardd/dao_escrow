@@ -15,11 +15,13 @@ contract Escrow {
     address public escrowFactoryContractAddress;
     ERC20 public tokenAddress;
     using SafeERC20 for ERC20;
+    address public dao;
 
     enum EscrowStatus {
         PENDING,
         CONFIRMED,
-        CLOSED
+        CLOSED,
+        DISPUTE_CREATED
     }
 
     struct EscrowDetails {
@@ -29,11 +31,18 @@ contract Escrow {
         EscrowStatus status;
         string tokenName;
     }
+
+    struct Dispute {
+        address _creator;
+        address _otherParty;
+        string _reason;
+    }
     constructor(
         address _creator,
         address _otherParty,
         uint256 _amount,
-        address tokenUsed
+        address tokenUsed,
+        address _dao
     ) {
         amount = _amount;
         creator = _creator;
@@ -41,6 +50,7 @@ contract Escrow {
         escrowStatus = EscrowStatus.PENDING;
         createdDateTime = block.timestamp;
         tokenAddress = ERC20(tokenUsed);
+        dao = _dao;
     }
 
     modifier onlyOtherParty(address user) {
@@ -53,6 +63,16 @@ contract Escrow {
 
     modifier onlyCreatorOrOtherParty(address user) {
         require(user == creator || user == otherParty);
+        _;
+    }
+
+    modifier onlyCreatorOrOtherPartyOrDao(address _interactor) {
+        require(
+            _interactor == creator ||
+                _interactor == otherParty ||
+                _interactor == dao,
+            "only allowed user can perform this action"
+        );
         _;
     }
     function confirmEscrow(address user) external onlyOtherParty(user) {
@@ -89,5 +109,15 @@ contract Escrow {
         );
         tokenAddress.safeTransfer(creator, amount);
         escrowStatus = EscrowStatus.CLOSED;
+    }
+    function createEscrowDispute(
+        string memory _reason
+    ) external onlyCreatorOrOtherParty(msg.sender) {
+        require(
+            escrowStatus == EscrowStatus.CONFIRMED,
+            "only confirmed escrow can create dispute"
+        );
+
+        escrowStatus = EscrowStatus.DISPUTE_CREATED;
     }
 }

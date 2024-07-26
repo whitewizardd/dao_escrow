@@ -52,10 +52,11 @@ contract EscrowDao {
     }
 
     function createDispute(
-        address _contractAddress,
+        address _disputeCreator,
+        address _otherParty,
         string memory _reason
-    ) external onlyContract(_contractAddress) {
-        Dispute storage dispute = disputeCreated[_contractAddress];
+    ) external onlyContract(msg.sender) {
+        Dispute storage dispute = disputeCreated[msg.sender];
         require(
             dispute.disputeStatus == DisputeStatus.NOT_CREATED,
             "dispute alfready created for this contract"
