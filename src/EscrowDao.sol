@@ -61,11 +61,11 @@ contract EscrowDao {
             dispute.disputeStatus == DisputeStatus.NOT_CREATED,
             "dispute alfready created for this contract"
         );
-        dispute.applicant = address(0);
-        dispute.otherParty = address(0);
+        dispute.applicant = _disputeCreator;
+        dispute.otherParty = _otherParty;
         dispute.disputeReason = _reason;
         dispute.disputeStatus = DisputeStatus.OPEN;
-        addressDispute.push(_contractAddress);
+        addressDispute.push(msg.sender);
     }
 
     function sendMessageForDispute(
