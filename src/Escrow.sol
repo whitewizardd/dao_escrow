@@ -3,6 +3,7 @@ pragma solidity ^0.8.20;
 
 import {ERC20} from "../lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
 import {SafeERC20} from "./../lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
+import {IEscrowDao} from "./interfaces/IEscrowDao.sol";
 
 contract Escrow {
     uint public amount;
@@ -117,7 +118,9 @@ contract Escrow {
             escrowStatus == EscrowStatus.CONFIRMED,
             "only confirmed escrow can create dispute"
         );
-
+        if (msg.sender == creator) {
+            IEscrowDao(dao).createDispute(msg.sender, otherParty, _reason);
+        } else IEscrowDao(dao).createDispute(msg.sender, creator, _reason);
         escrowStatus = EscrowStatus.DISPUTE_CREATED;
     }
 }
