@@ -129,5 +129,5 @@ contract Escrow {
         escrowStatus = EscrowStatus.DISPUTE_CREATED;
     }
 
-    function 
+    // function
 }
